@@ -18,8 +18,8 @@ class CreateComposersTable extends Migration
             $table->timestamps();
 
             $table->string('name');
-            $table->date('born')->nullable();
-            $table->date('deceased')->nullable();
+            $table->string('born')->nullable();
+            $table->string('deceased')->nullable();
             $table->text('notes')->nullable();
         });
     }

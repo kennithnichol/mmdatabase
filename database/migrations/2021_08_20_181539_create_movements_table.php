@@ -18,7 +18,10 @@ class CreateMovementsTable extends Migration
             $table->timestamps();
             $table->unsignedSmallInteger('order')->default(1);
             $table->string('title')->nullable();
-            $table->text('notes')->nullable();            
+            $table->text('notes')->nullable();
+
+            $table->unsignedBigInteger('piece_id');
+            $table->foreign('piece_id')->references('id')->on('pieces');
         });
     }
 

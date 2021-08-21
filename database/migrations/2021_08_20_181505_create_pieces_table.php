@@ -17,8 +17,8 @@ class CreatePiecesTable extends Migration
             $table->id();
             $table->timestamps();
             $table->string('title');
-            $table->unsignedSmallInteger('year_composed');
-            $table->text('notes');
+            $table->unsignedSmallInteger('year_composed')->nullable();
+            $table->text('notes')->nullable();
             
             // piece has one composer
             $table->unsignedBigInteger('composer_id');
