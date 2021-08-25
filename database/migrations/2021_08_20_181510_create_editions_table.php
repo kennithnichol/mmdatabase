@@ -16,15 +16,15 @@ class CreateEditionsTable extends Migration
         Schema::create('editions', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedSmallInteger('year_published');
-            $table->text('link');
+            $table->unsignedSmallInteger('year_published')->nullable();
+            $table->text('link')->nullable();
 
             // edition has one editor
-            $table->unsignedBigInteger('editor_id');
+            $table->unsignedBigInteger('editor_id')->nullable();
             $table->foreign('editor_id')->references('id')->on('editors');
 
             // edition has one publisher
-            $table->unsignedBigInteger('publisher_id');
+            $table->unsignedBigInteger('publisher_id')->nullable();
             $table->foreign('publisher_id')->references('id')->on('publishers');
 
             // edition has one piece

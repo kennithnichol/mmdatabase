@@ -9,23 +9,28 @@ class Edition extends Model
 {
     use HasFactory;
 
+    public function piece()
+    {
+        return $this->belongsTo(Piece::class);
+    }
+
     public function editor()
     {
-        return $this->hasOne('App\Models\Editor');
+        return $this->belongsTo(Editor::class);
     }
 
     public function publisher()
     {
-        return $this->hasOne('App\Models\Publisher');
+        return $this->belongsTo(Publisher::class);
     }
 
     public function composer()
     {
-        return $this->hasOne('App\Models\Composer');
+        return $this->hasOneThrough(Composer::class, Piece::class);
     }
 
     public function sections()
     {
-        return $this->hasMany('App\Models\Section');
+        return $this->hasMany(Section::class);
     }
 }

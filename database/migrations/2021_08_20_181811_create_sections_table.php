@@ -29,9 +29,9 @@ class CreateSectionsTable extends Migration
             $table->enum('ornamental_note', [1, 2, 4, 8, 16, 32, 64, 128])->nullable();
             $table->boolean('ornamental_note_dotted')->default(false);
 
-            // section belongs to one movement
+            // section belongs to one time signature
             $table->unsignedBigInteger('movement_id');
-            $table->foreign('movement_id')->references('id')->on('time_signatures');
+            $table->foreign('movement_id')->references('id')->on('movements');
 
             // section belongs to one edition
             $table->unsignedBigInteger('edition_id');

@@ -11,11 +11,16 @@ class Movement extends Model
 
     public function piece()
     {
-        return $this->belongsTo('\App\Model\Piece');
+        return $this->belongsTo(Piece::class);
+    }
+
+    public function timeSignature()
+    {
+        return $this->belongsTo(TimeSignature::class);
     }
 
     public function sections()
     {
-        return $this->hasMany('\App\Model\Section');
+        return $this->hasMany(Section::class);
     }
 }

@@ -9,18 +9,27 @@ class Section extends Model
 {
     use HasFactory;
 
-    public function timeSignature()
-    {
-        return $this->hasOne('App\Models\TimeSignature');
-    }
+    public $fillable = [
+        'movement',
+        'tempo_text',
+        'mm_note',
+        'mm_note_dotted',
+        'bpm',
+        'structural_note',
+        'structural_note_dotted',
+        'stacatto_note',
+        'stacatto_note_dotted',
+        'ornamental_note',
+        'ornamental_note_dotted',
+    ];
 
     public function movement()
     {
-        return $this->belongsTo('App\Models\Movement');
+        return $this->belongsTo(Movement::class);
     }
 
     public function edition()
     {
-        return $this->belongsTo('App\Models\Edition');
+        return $this->belongsTo(Edition::class);
     }
 }

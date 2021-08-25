@@ -11,6 +11,16 @@ class Publisher extends Model
 
     public function pieces()
     {
-        return $this->hasMany('App\Models\Piece');
+        return $this->hasManyThrough(Piece::class, Edition::class);
+    }
+
+    public function composers()
+    {
+        return $this->hasManyThrough(Composer::class, Edition::class);
+    }
+
+    public function editors()
+    {
+        return $this->hasManyThrough(Editor::class, Edition::class);
     }
 }

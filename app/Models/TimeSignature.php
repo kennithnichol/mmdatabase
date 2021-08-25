@@ -8,6 +8,6 @@ class TimeSignature extends Model
 {
     public function sections()
     {
-        return $this->belongsToMany('App\Models\Section');
+        return $this->hasMany(Section::class);
     }
 }

@@ -16,8 +16,8 @@ class CreateTimeSignaturesTable extends Migration
         Schema::create('time_signatures', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('count', 4);
-            $table->enum('note', [1,2,4,8,16,32,64])->nullable();
+            $table->string('count', 12);
+            $table->enum('note', [1,2,4,8,16,32])->nullable();
         });
     }
 

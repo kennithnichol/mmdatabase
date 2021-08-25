@@ -11,16 +11,26 @@ class Piece extends Model
 
     public function composer()
     {
-        return $this->hasOne('App\Models\Composer');
+        return $this->belongsTo(Composer::class);
     }
 
     public function editions()
     {
-        return $this->hasMany('App\Models\Edition');
+        return $this->hasMany(Edition::class);
+    }
+
+    public function editors()
+    {
+        return $this->hasManyThrough(Editor::class, Edition::class);
+    }
+
+    public function publishers()
+    {
+        return $this->hasManyThrough(Publisher::class, Edition::class);
     }
 
     public function movements()
     {
-        return $this->hasMany('App\Models\Movement');
+        return $this->hasMany(Movement::class);
     }
 }
