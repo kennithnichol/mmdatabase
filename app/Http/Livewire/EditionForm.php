@@ -60,7 +60,7 @@ class EditionForm extends Component
             'publisher' => '',
             'editor' => '',
             'sections' => '',
-            'year_published' => 'nullable|integer|max:4|min:4',
+            'year_published' => 'nullable|digits:4',
             'link' => 'url|nullable',
         ];
     }
@@ -148,7 +148,7 @@ class EditionForm extends Component
 
         $this->edition->piece_id = $this->piece;
         $this->edition->save();
-        $this->edition->sections()->saveMany($this->sections);
+        $this->edition->sections()->saveMany($this->sections->all());
 
         return redirect()->route('edition.index', ['piece' => $this->piece]);
     }
