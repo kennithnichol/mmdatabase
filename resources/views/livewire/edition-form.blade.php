@@ -81,14 +81,15 @@
         <table class="table">
             <thead>
             <tr>
-                <th>Movement</th>
-                <th>Time Signature</th>
-                <th>Tempo Text</th>
-                <th>MM</th>
-                <th>Structural Note</th>
-                <th>staccato Note</th>
-                <th>Ornamental Note</th>
-                <th>Action</th>
+                <th scope="col">#</th>
+                <th scope="col">Movement</th>
+                <th scope="col">Time Signature</th>
+                <th scope="col">Tempo Text</th>
+                <th scope="col">MM</th>
+                <th scope="col">Structural Note</th>
+                <th scope="col">Staccato Note</th>
+                <th scope="col">Ornamental Note</th>
+                <th scope="col">Action</th>
             </tr>
             </thead>
             <tbody>
@@ -98,8 +99,8 @@
                     $time_signature = $section_movement->timeSignature;
                 @endphp
                 <tr>
+                    <th scope="row">{{ $index }}</th>
                     <td>{{ $section_movement->number }}</td>
-
                     <td>{{ $time_signature->count . ($time_signature->note ? "/" . $time_signature->note : "") }}</td>
                     <td>{{ $section["tempo_text"] }}</td>
                     <td>{{ $section["mm_note"] . ($section["mm_note_dotted"] ? "" : "") . " = " . $section["bpm"] }}</td>
