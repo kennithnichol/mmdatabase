@@ -9,6 +9,12 @@ class Composer extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'born',
+        'deceased'
+    ];
+
     public function pieces()
     {
         return $this->hasMany('App\Models\Piece');

@@ -1,36 +1,49 @@
 <div>
-    <form wire:submit.prevent="ave" method="POST">
+    <form wire:submit.prevent="save" method="POST">
         @csrf
         <div class="row g-2">
             <div class="col-md-6">
-                <label for="composer" class="form-label">{{ __("Composer") }}</label>
-                <select wire:model="composer" id="composer" class="form-select" required
-                        autocomplete="composer" autofocus>
-                    <option value="">-- select a composer --</option>
-                    @foreach ($composers as $composer)
-                        <option value="{{ $composer->id }}">{{ $composer->name }}</option>
-                    @endforeach
-                </select>
 
+                <label for="composer" class="form-label">{{ __("Composer") }}</label>
+                <div class="input-group">
+                    <select wire:model="composer" id="composer"
+                            class="form-select @error('composer') is-invalid @enderror"
+                            autocomplete="composer" autofocus>
+                        <option value="">-- select a composer --</option>
+                        @foreach ($composers as $composer_data)
+                            <option value="{{ $composer_data->id }}">{{ $composer_data->name }}</option>
+                        @endforeach
+                    </select>
+                    <button type="button" wire:click="addComposer" class="btn btn-outline-primary">Add Composer</button>
+                </div>
                 @error("composer")
                 <span class="invalid-feedback" role="alert">{{ $message }}</span>
                 @enderror
+
             </div>
             <div class="col-md-6">
                 <label for="piece" class="form-label">{{ __("Piece") }}</label>
-                <select wire:model="piece" id="piece" class="form-select" required autocomplete="piece">
-                    @forelse ($pieces as $piece)
-                        <option value="{{ $piece->id }}">{{ $piece->title }}</option>
-                    @empty
-                        <option value="">-- select a composer first --</option>
-                    @endforelse
-                </select>
+                <div class="input-group">
+                    <select wire:model="piece" id="piece" class="form-select @error('piece') is-invalid @enderror"
+                            autocomplete="piece">
+                        @if(empty($composer))
+                            <option value="">-- select a composer first --</option>
+                        @else
+                            <option value="">-- select a piece --</option>
+                        @endif
+                        @foreach ($pieces as $piece)
+                            <option value="{{ $piece->id }}">{{ $piece->title }}</option>
+                        @endforeach
+                    </select>
+                    @isset($piece)
+                        <button type="button" wire:click="addPiece" class="btn btn-outline-primary">Add Piece</button>
+                    @endisset
+                </div>
                 @error("piece")
                 <span class="invalid-feedback" role="alert">{{ $message }}</span>
                 @enderror
             </div>
-        </div>
-        <div class="row g-2">
+
             <div class="col-md-6">
                 <label for="publisher" class="form-label">{{ __("Publisher (optional)") }}</label>
                 <select wire:model="publisher" id="publisher" class="form-select">
@@ -55,8 +68,7 @@
                 <span class="invalid-feedback" role="alert">{{ $message }}</span>
                 @enderror
             </div>
-        </div>
-        <div class="row g-2">
+
             <div class="col-md-4">
                 <div class="col-sm-auto">
                     <label for="year_published" class="form-label">{{ __("Year published (optional):") }}</label>
@@ -75,61 +87,63 @@
                 <span class="invalid-feedback" role="alert">{{ $message }}</span>
                 @enderror
             </div>
-        </div>
 
-        <h2>Sections</h2>
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Movement</th>
-                <th scope="col">Time Signature</th>
-                <th scope="col">Tempo Text</th>
-                <th scope="col">MM</th>
-                <th scope="col">Structural Note</th>
-                <th scope="col">Staccato Note</th>
-                <th scope="col">Ornamental Note</th>
-                <th scope="col">Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            @forelse($sections as $index => $section)
-                @php
-                    $section_movement =  $movements->where("id", $section["movement"])->first();
-                    $time_signature = $section_movement->timeSignature;
-                @endphp
-                <tr>
-                    <th scope="row">{{ $index }}</th>
-                    <td>{{ $section_movement->number }}</td>
-                    <td>{{ $time_signature->count . ($time_signature->note ? "/" . $time_signature->note : "") }}</td>
-                    <td>{{ $section["tempo_text"] }}</td>
-                    <td>{{ $section["mm_note"] . ($section["mm_note_dotted"] ? "" : "") . " = " . $section["bpm"] }}</td>
-                    <td>{{ $section["structural_note"] . ($section["structural_note_dotted"] ? "&bull;" : "") }}</td>
-                    <td>{{ $section["staccato_note"] . ($section["staccato_note_dotted"] ? "&bull;" : "") }}</td>
-                    <td>{{ $section["ornamental_note"] . ($section["ornamental_note_dotted"] ? "&bull;" : "") }}</td>
-                    <td>
-                        <button wire:click.prevent="editSection({{ $index }})">Edit</button>
-                        <button wire:click.prevent="removeSection({{ $index }})">Delete</button>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="" class="text-center">No sections added</td>
-                </tr>
-            @endforelse
-        </table>
-        @isset($piece)
-            <div class="row">
-                <button wire:click.prevent="addSection" type="button" data-bs-toggle="modal" data-bs-target="#section-modal">Add Section</button>
-                <button type="submit">Save</button>
+            <div class="col-md-12">
+                <h2>Sections</h2>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Movement</th>
+                        <th scope="col">Time Signature</th>
+                        <th scope="col">Tempo Text</th>
+                        <th scope="col">MM</th>
+                        <th scope="col">Structural Note</th>
+                        <th scope="col">Staccato Note</th>
+                        <th scope="col">Ornamental Note</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @forelse($sections as $index => $section)
+                        @php
+                            $section_movement =  $movements->where("id", $section["movement"])->first();
+                            $time_signature = $section_movement->timeSignature;
+                        @endphp
+                        <tr>
+                            <th scope="row">{{ $index }}</th>
+                            <td>{{ $section_movement->number }}</td>
+                            <td>{{ $time_signature->count . ($time_signature->note ? "/" . $time_signature->note : "") }}</td>
+                            <td>{{ $section["tempo_text"] }}</td>
+                            <td>{{ $section["mm_note"] . ($section["mm_note_dotted"] ? "" : "") . " = " . $section["bpm"] }}</td>
+                            <td>{{ $section["structural_note"] . ($section["structural_note_dotted"] ? "&bull;" : "") }}</td>
+                            <td>{{ $section["staccato_note"] . ($section["staccato_note_dotted"] ? "&bull;" : "") }}</td>
+                            <td>{{ $section["ornamental_note"] . ($section["ornamental_note_dotted"] ? "&bull;" : "") }}</td>
+                            <td>
+                                <button wire:click.prevent="editSection({{ $index }})" data-bs-toggle="modal"
+                                        data-bs-target="#section-modal" class="btn btn-outline-primary">Edit</button>
+                                <button wire:click.prevent="removeSection({{ $index }})" class="btn btn-danger">Delete</button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="" class="text-center">No sections added</td>
+                        </tr>
+                    @endforelse
+                </table>
+                <button wire:click.prevent="addSection" type="button" data-bs-toggle="modal"
+                        data-bs-target="#section-modal" class="btn btn-outline-primary"
+                        @unless($piece) disabled @endunless>Add Section
+                </button>
+                <button type="submit" class="btn btn-primary">Save</button>
+
+
+                @if($errors && !$this->showModal)
+                    @foreach($errors->all() as $error)
+                        <span>{{ $error }}</span>
+                    @endforeach
+                @endif
             </div>
-        @endisset
-
-        @if($errors)
-            @foreach($errors->all() as $error)
-                <span>{{ $error }}</span>
-            @endforeach
-        @endif
     </form>
 
     <div wire:ignore.self id="section-modal" class="modal fade" role="dialog">
@@ -255,7 +269,8 @@
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">Save</button>
-                        <button wire:click="close" type="button" class="btn btn-secondary ml-auto" data-bs-dismiss="modal">Cancel
+                        <button wire:click.prevent="close" type="button" class="btn btn-secondary ml-auto"
+                                data-bs-dismiss="modal">Cancel
                         </button>
                     </div>
                 </form>
@@ -263,3 +278,15 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    Livewire.on('sectionSaved', () => {
+        let modalContainer = document.getElementById('section-modal');
+        if (modalContainer) {
+            bs_modal.getInstance(modalContainer).hide();
+        }
+    });
+</script>
+@endpush
+

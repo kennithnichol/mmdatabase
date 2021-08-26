@@ -9,7 +9,7 @@ class Section extends Model
 {
     use HasFactory;
 
-    public $fillable = [
+    protected $fillable = [
         'movement',
         'tempo_text',
         'mm_note',
