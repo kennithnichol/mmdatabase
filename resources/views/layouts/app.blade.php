@@ -6,12 +6,12 @@
         <title>@yield('title')</title>
         <link rel='stylesheet' href='{{ asset('css/app.css') }}'>
         @livewireStyles
-        <script src='{{ asset('js/app.js') }}' defer></script>
     </head>
     <body>
         <div class='container'>
             @yield('content')
         </div>
+        <script src='{{ asset('js/app.js') }}' defer></script>
         @livewireScripts
     </body>
 </html>

@@ -119,7 +119,7 @@
         </table>
         @isset($piece)
             <div class="row">
-                <button wire:click.prevent="addSection" type="button">Add Section</button>
+                <button wire:click.prevent="addSection" type="button" data-bs-toggle="modal" data-bs-target="#section-modal">Add Section</button>
                 <button type="submit">Save</button>
             </div>
         @endisset
@@ -131,15 +131,13 @@
         @endif
     </form>
 
-    <div class="modal bg-dark" @if($showModal) style="display: block" @endif data-backdrop="true" role="dialog">
-        <div class="modal-dialog" role="document">
+    <div wire:ignore.self id="section-modal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <form wire:submit.prevent="saveSection">
                     <div class="modal-header">
                         <h5>@if($isEditing)Edit section @else Add section @endif</h5>
-                        <button wire:click="close" type="button" class="close">
-                            <span aria-hidden="true">x</span>
-                        </button>
+                        <button wire:click="close" type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body form-row">
                         <div class="col-12">
@@ -256,7 +254,7 @@
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">Save</button>
-                        <button wire:click.prevent="close" type="button" class="btn btn-secondary ml-auto">Cancel
+                        <button wire:click="close" type="button" class="btn btn-secondary ml-auto" data-bs-dismiss="modal">Cancel
                         </button>
                     </div>
                 </form>
