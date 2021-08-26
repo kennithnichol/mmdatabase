@@ -22,14 +22,14 @@ class EditionForm extends Component
     public $editors;
     public $movements;
     public $sections;
-    
+
     public $piece;
     public $composer;
     public $publisher;
     public $editor;
     public $year_published;
     public $link;
-    
+
     // currently edited section
     public $showModal = false;
     public $isEditing = false;
@@ -47,8 +47,8 @@ class EditionForm extends Component
                 'section.bpm' => 'required|integer',
                 'section.structural_note' => '',
                 'section.structural_note_dotted' => '',
-                'section.stacatto_note' => '',
-                'section.stacatto_note_dotted' => '',
+                'section.staccato_note' => '',
+                'section.staccato_note_dotted' => '',
                 'section.ornamental_note' => '',
                 'section.ornamental_note_dotted' => '',
             ];
@@ -75,17 +75,18 @@ class EditionForm extends Component
         $this->movements = collect();
         $this->sections = collect();
 
-        $this->section = new Section();        
+        $this->section = new Section();
     }
 
     public function addSection()
     {
         $this->section = new Section();
-        $this->showModal = true;        
+        $this->showModal = true;
     }
 
     public function editSection($index)
     {
+        dd($this->sections);
         $this->showModal = true;
         $this->isEditing = true;
         $this->editIndex = $index;
@@ -122,6 +123,7 @@ class EditionForm extends Component
     public function saveSection()
     {
         $this->validate();
+
         if ( $this->isEditing ) {
             $this->sections[$this->editIndex] = $this->section;
         } else {

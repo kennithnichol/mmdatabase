@@ -24,8 +24,8 @@ class CreateSectionsTable extends Migration
 
             $table->enum('structural_note', [1, 2, 4, 8, 16, 32, 64, 128])->nullable();
             $table->boolean('structural_note_dotted')->default(false);
-            $table->enum('stacatto_note', [1, 2, 4, 8, 16, 32, 64, 128])->nullable();
-            $table->boolean('stacatto_note_dotted')->default(false);
+            $table->enum('staccato_note', [1, 2, 4, 8, 16, 32, 64, 128])->nullable();
+            $table->boolean('staccato_note_dotted')->default(false);
             $table->enum('ornamental_note', [1, 2, 4, 8, 16, 32, 64, 128])->nullable();
             $table->boolean('ornamental_note_dotted')->default(false);
 

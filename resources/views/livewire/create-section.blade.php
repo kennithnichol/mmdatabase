@@ -82,8 +82,8 @@
             </div>
         </div>
         <div class='form-group form-inline col-12 col-sm-4'>
-            <label for='stacatto_note'>Fastest Stacatto</label>
-            <select id='stacatto_note' wire:model='section.stacatto_note' class='form-control'>
+            <label for='staccato_note'>Fastest staccato</label>
+            <select id='staccato_note' wire:model='section.staccato_note' class='form-control'>
                 <option value=''> -- </option>
                 <option value='1'>Whole Note</option>
                 <option value='2'>Half Note</option>
@@ -95,9 +95,9 @@
                 <option value='128'>128th Note</option>
             </select>
             <div class='form-check my-2 text-center col'>
-                <input class='form-check-input' id='stacatto_note_dotted' type='checkbox'
-                    wire:model='section.stacatto_note_dotted' />
-                <label class='form-check-label' for='stacatto_note_dotted'>dotted?</label>
+                <input class='form-check-input' id='staccato_note_dotted' type='checkbox'
+                    wire:model='section.staccato_note_dotted' />
+                <label class='form-check-label' for='staccato_note_dotted'>dotted?</label>
             </div>
         </div>
         <div class='form-group form-inline col-12 col-sm-4'>

@@ -17,8 +17,8 @@ class Section extends Model
         'bpm',
         'structural_note',
         'structural_note_dotted',
-        'stacatto_note',
-        'stacatto_note_dotted',
+        'staccato_note',
+        'staccato_note_dotted',
         'ornamental_note',
         'ornamental_note_dotted',
     ];
