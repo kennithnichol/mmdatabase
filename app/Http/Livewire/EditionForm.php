@@ -68,19 +68,32 @@ class EditionForm extends Component
 
     public function mount(Edition $edition)
     {
-        $this->composers = Composer::has('pieces')->orderBy('name', 'asc')->get();
-        $this->publishers = Publisher::orderBy('name')->get();
-        $this->editors = Editor::orderBy('name')->get();
-
         $this->edition = $edition ?? new Edition();
 
-        $this->sections = $edition->sections;
-        $this->piece = $edition->piece->id;
-        $this->composer = $edition->composer->id;
+        $this->composers = Composer::has('pieces')->orderBy('name', 'asc')->get();
+        $this->publishers = Publisher::orderBy('name')->get();
+        $this->editors = Editor::orderBy('name')->get();        
 
-        if ($this->composer) { $this->updatedComposer($this->composer); }
-        if ($this->piece) { $this->updatedPiece($this->piece); }
+        $this->pieces = collect();
+        $this->sections = collect();
+        $this->movements = collect();
 
+        if ($edition->id) {
+            $this->sections = $edition->sections;
+            $this->piece = $edition->piece->id;
+            $this->composer = $edition->composer->id;
+            $this->publisher = $edition->publisher;
+            $this->editor = $edition->editor;
+        }
+
+        
+
+        if ($this->composer) {
+            $this->updatedComposer($this->composer);
+        }
+        if ($this->piece) {
+            $this->updatedPiece($this->piece);
+        }
     }
 
     public function addSection()
@@ -119,6 +132,7 @@ class EditionForm extends Component
             $this->movements = collect();
             return;
         }
+
         $this->movements = Movement::where('piece_id', $piece_id)->get();
     }
 
@@ -137,15 +151,15 @@ class EditionForm extends Component
         } else {
             $this->sections->push($this->section);
         }
-//        $this->sortSections();
+        //        $this->sortSections();
 
         $this->emit('sectionSaved');
         $this->close();
     }
 
-    public function updateSectionOrder( $orderIds )
+    public function updateSectionOrder($orderIds)
     {
-        collect($orderIds)->each(function($id) {
+        collect($orderIds)->each(function ($id) {
             $this->sections->where('id', (int) $id['value'])->order = $id['order'];
         });
         $this->sortSections();
@@ -154,7 +168,7 @@ class EditionForm extends Component
     protected function sortSections()
     {
         $this->sections = $this->sections->sortBy(['movement', 'asc'], ['order', 'asc']);
-        $this->sections->each(function($section, $key) {
+        $this->sections->each(function ($section, $key) {
             $section->order = $key;
         });
     }
@@ -164,8 +178,8 @@ class EditionForm extends Component
         $this->resetErrorBag();
         $this->resetValidation();
         $rehydratedSections = collect();
-        foreach($this->sections as $section) {
-            if ($section instanceOf Section) {
+        foreach ($this->sections as $section) {
+            if ($section instanceof Section) {
                 $rehydratedSections->push($section);
             } else {
                 $rehydratedSections->push(new Section($section));
