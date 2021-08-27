@@ -104,17 +104,18 @@
                         <th scope="col">Action</th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody wire:sortable="updateSectionOrder">
                     @forelse($sections as $index => $section)
                         @php
-                            $section_movement =  $movements->where("id", $section["movement"])->first();
+                            $section_movement =  $movements->where("id", $section["movement_id"])->first();
                             $time_signature = $section_movement->timeSignature;
+                            dump($section['order']);
                         @endphp
-                        <tr>
-                            <th scope="row">{{ $index }}</th>
+                        <tr wire:sortable.item="{{ $section->id }}" wire:key="section-{{ $section->id }}">
+                            <th scope="row">{{ $section['order'] }}</th>
                             <td>{{ $section_movement->number }}</td>
                             <td>{{ $time_signature->count . ($time_signature->note ? "/" . $time_signature->note : "") }}</td>
-                            <td>{{ $section["tempo_text"] }}</td>
+                            <td>{{ $section['tempo_text'] }}</td>
                             <td>{{ $section["mm_note"] . ($section["mm_note_dotted"] ? "" : "") . " = " . $section["bpm"] }}</td>
                             <td>{{ $section["structural_note"] . ($section["structural_note_dotted"] ? "&bull;" : "") }}</td>
                             <td>{{ $section["staccato_note"] . ($section["staccato_note_dotted"] ? "&bull;" : "") }}</td>
@@ -157,15 +158,15 @@
                     <div class="modal-body form-row">
                         <div class="col-12">
                             <label for="movement">Movement:</label>
-                            <select id="movement" wire:model="section.movement"
-                                    class="form-control @error("section.movement") is-invalid @enderror">
+                            <select id="movement" wire:model="section.movement_id"
+                                    class="form-control @error("section.movement_id") is-invalid @enderror">
                                 <option value=""> -- movement --</option>
                                 @foreach ($movements as $movement)
                                     <option
                                         value="{{ $movement->id }}">{{ $movement->number . ". " . $movement->title }}</option>
                                 @endforeach
                             </select>
-                            @error("section.movement")
+                            @error("section.movement_id")
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{  $message }}</strong>
                             </span>
@@ -273,6 +274,7 @@
                                 data-bs-dismiss="modal">Cancel
                         </button>
                     </div>
+                    <input type="hidden" wire:model="section.order" value="{{ $section->order ?? $sections->count() + 1 }}" />
                 </form>
             </div>
         </div>

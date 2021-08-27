@@ -10,7 +10,8 @@ class Section extends Model
     use HasFactory;
 
     protected $fillable = [
-        'movement',
+        'order',
+        'movement_id',
         'tempo_text',
         'mm_note',
         'mm_note_dotted',

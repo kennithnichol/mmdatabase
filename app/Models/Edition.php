@@ -26,7 +26,7 @@ class Edition extends Model
 
     public function composer()
     {
-        return $this->hasOneThrough(Composer::class, Piece::class);
+        return $this->piece()->first()->composer();
     }
 
     public function sections()

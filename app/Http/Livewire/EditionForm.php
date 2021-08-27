@@ -40,17 +40,18 @@ class EditionForm extends Component
     {
         if ($this->showModal) {
             return [
-                'section.movement' => 'required',
+                'section.order' => 'required|integer',
+                'section.movement_id' => 'required',
                 'section.tempo_text' => '',
                 'section.mm_note' => 'required',
-                'section.mm_note_dotted' => '',
+                'section.mm_note_dotted' => 'boolean',
                 'section.bpm' => 'required|integer',
                 'section.structural_note' => '',
-                'section.structural_note_dotted' => '',
+                'section.structural_note_dotted' => 'boolean',
                 'section.staccato_note' => '',
-                'section.staccato_note_dotted' => '',
+                'section.staccato_note_dotted' => 'boolean',
                 'section.ornamental_note' => '',
-                'section.ornamental_note_dotted' => '',
+                'section.ornamental_note_dotted' => 'boolean',
             ];
         }
 
@@ -65,21 +66,27 @@ class EditionForm extends Component
         ];
     }
 
-    public function mount()
+    public function mount(Edition $edition)
     {
-        $this->edition = $edition ?? new Edition();
         $this->composers = Composer::has('pieces')->orderBy('name', 'asc')->get();
         $this->publishers = Publisher::orderBy('name')->get();
         $this->editors = Editor::orderBy('name')->get();
-        $this->pieces = collect();
-        $this->movements = collect();
-        $this->sections = collect();
-        $this->section = new Section();
+
+        $this->edition = $edition ?? new Edition();
+
+        $this->sections = $edition->sections;
+        $this->piece = $edition->piece->id;
+        $this->composer = $edition->composer->id;
+
+        if ($this->composer) { $this->updatedComposer($this->composer); }
+        if ($this->piece) { $this->updatedPiece($this->piece); }
+
     }
 
     public function addSection()
     {
         $this->section = new Section();
+        $this->section['order'] = $this->sections->count() + 1;
         $this->showModal = true;
     }
 
@@ -119,20 +126,53 @@ class EditionForm extends Component
     {
         $this->validate();
 
+        // force boolean values on dotted fields (can't be null!)
+        $this->section['mm_note_dotted'] = (bool) $this->section['mm_note_dotted'];
+        $this->section['structural_note_dotted'] = (bool) $this->section['structural_note_dotted'];
+        $this->section['staccato_note_dotted'] = (bool) $this->section['staccato_note_dotted'];
+        $this->section['ornamental_note_dotted'] = (bool) $this->section['ornamental_note_dotted'];
+
         if ($this->isEditing) {
             $this->sections[$this->editIndex] = $this->section;
         } else {
             $this->sections->push($this->section);
         }
+//        $this->sortSections();
 
         $this->emit('sectionSaved');
         $this->close();
+    }
+
+    public function updateSectionOrder( $orderIds )
+    {
+
+        foreach( $orderIds as $newOrder ) {
+            dd($this->sections, $newOrder, $this->sections->get($newOrder['value']));
+            $this->sections->get($newOrder['value'])->order = $newOrder['order'];
+        }
+    }
+
+    protected function sortSections()
+    {
+        $this->sections = $this->sections->sortBy(['movement', 'asc'], ['order', 'asc']);
+        $this->sections->each(function($section, $key) {
+            $section->order = $key;
+        });
     }
 
     public function hydrate()
     {
         $this->resetErrorBag();
         $this->resetValidation();
+        $rehydratedSections = collect();
+        foreach($this->sections as $section) {
+            if ($section instanceOf Section) {
+                $rehydratedSections->push($section);
+            } else {
+                $rehydratedSections->push(new Section($section));
+            }
+        }
+        $this->sections = $rehydratedSections;
     }
 
     public function close()
