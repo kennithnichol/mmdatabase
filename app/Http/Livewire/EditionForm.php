@@ -145,11 +145,10 @@ class EditionForm extends Component
 
     public function updateSectionOrder( $orderIds )
     {
-
-        foreach( $orderIds as $newOrder ) {
-            dd($this->sections, $newOrder, $this->sections->get($newOrder['value']));
-            $this->sections->get($newOrder['value'])->order = $newOrder['order'];
-        }
+        collect($orderIds)->each(function($id) {
+            $this->sections->where('id', (int) $id['value'])->order = $id['order'];
+        });
+        $this->sortSections();
     }
 
     protected function sortSections()
