@@ -80,6 +80,7 @@ class EditionForm extends Component
 
         if ($edition->id) {
             $this->sections = $edition->sections;
+            // $this->sortSections();
             $this->piece = $edition->piece->id;
             $this->composer = $edition->composer->id;
             $this->publisher = $edition->publisher;
@@ -113,7 +114,7 @@ class EditionForm extends Component
 
     public function removeSection($index)
     {
-        $this->sections->forget($index);
+        $this->sections->forget($index)->save();
     }
 
     public function updatedComposer($composer_id)
@@ -151,7 +152,8 @@ class EditionForm extends Component
         } else {
             $this->sections->push($this->section);
         }
-        //        $this->sortSections();
+        
+        // $this->sortSections();
 
         $this->emit('sectionSaved');
         $this->close();
@@ -159,18 +161,18 @@ class EditionForm extends Component
 
     public function updateSectionOrder($orderIds)
     {
-        collect($orderIds)->each(function ($id) {
-            $this->sections->where('id', (int) $id['value'])->order = $id['order'];
-        });
-        $this->sortSections();
+        // ref: https://laravel-livewire.com/screencasts/s8-dragging-list
+
+        // $this->sections = collect($orderIds)->map(function($id) {
+        //     return collect($this->sections)->where('id', (int) $id['value'])->first();
+        // });
+
+        // $this->sortSections();
     }
 
     protected function sortSections()
     {
-        $this->sections = $this->sections->sortBy(['movement', 'asc'], ['order', 'asc']);
-        $this->sections->each(function ($section, $key) {
-            $section->order = $key;
-        });
+        // $this->sections = $this->sections->sortBy(['movement', 'asc']);
     }
 
     public function hydrate()
