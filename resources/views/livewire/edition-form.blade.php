@@ -7,18 +7,18 @@
                 <label for="composer" class="form-label">{{ __('Composer') }}</label>
                 <div class="input-group">
                     <select wire:model="composer" id="composer"
-                        class="form-select @error('composer') is-invalid @enderror" @if ($edition->id)
+                        class="form-select @error('composer') is-invalid @enderror" @unless($canChangePiece)
                         disabled
-                        @endif
+                        @endunless
                         autocomplete="composer" autofocus>
                         <option value="">-- select a composer --</option>
                         @foreach ($composers as $composer_data)
                             <option value="{{ $composer_data->id }}">{{ $composer_data->name }}</option>
                         @endforeach
                     </select>
-                    @unless($edition->id)
+                    @if($canChangePiece)
                         <button type="button" wire:click="addComposer" class="btn btn-outline-primary">Add Composer</button>
-                    @endunless
+                    @endif
                 </div>
                 @error('composer')
                     <span class="invalid-feedback" role="alert">{{ $message }}</span>
@@ -29,9 +29,9 @@
                 <label for="piece" class="form-label">{{ __('Piece') }}</label>
                 <div class="input-group">
                     <select wire:model="piece" id="piece" class="form-select @error('piece') is-invalid @enderror"
-                        @if ($edition->id)
+                        @unless($canChangePiece)
                         disabled
-                        @endif
+                        @endunless
                         autocomplete="piece">
                         @if (empty($composer))
                             <option value="">-- select a composer first --</option>
@@ -42,11 +42,9 @@
                             <option value="{{ $piece->id }}">{{ $piece->title }}</option>
                         @endforeach
                     </select>
-                    @unless($edition->id && isset($piece))
-
+                    @if($canChangePiece && isset($piece))
                             <button type="button" wire:click="addPiece" class="btn btn-outline-primary">Add Piece</button>
-
-                    @endunless
+                    @endif
                 </div>
                 @error('piece')
                     <span class="invalid-feedback" role="alert">{{ $message }}</span>

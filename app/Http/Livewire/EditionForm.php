@@ -33,6 +33,7 @@ class EditionForm extends Component
     // the currently edited section
     public $showModal = false;
     public $isEditing = false;
+    public $canChangePiece = true;
     public $section;
     public $editIndex;
 
@@ -80,14 +81,12 @@ class EditionForm extends Component
 
         if ($edition->id) {
             $this->sections = $edition->sections;
-            // $this->sortSections();
+            $this->canChangePiece = false;
             $this->piece = $edition->piece->id;
             $this->composer = $edition->composer->id;
             $this->publisher = $edition->publisher;
             $this->editor = $edition->editor;
-        }
-
-        
+        }        
 
         if ($this->composer) {
             $this->updatedComposer($this->composer);
@@ -114,7 +113,8 @@ class EditionForm extends Component
 
     public function removeSection($index)
     {
-        $this->sections->forget($index)->save();
+        $this->sections->get($index)->delete();
+        $this->sections->forget($index);
     }
 
     public function updatedComposer($composer_id)
@@ -152,8 +152,8 @@ class EditionForm extends Component
         } else {
             $this->sections->push($this->section);
         }
-        
-        // $this->sortSections();
+
+        $this->canChangePiece = false;
 
         $this->emit('sectionSaved');
         $this->close();
@@ -163,11 +163,7 @@ class EditionForm extends Component
     {
         // ref: https://laravel-livewire.com/screencasts/s8-dragging-list
 
-        // $this->sections = collect($orderIds)->map(function($id) {
-        //     return collect($this->sections)->where('id', (int) $id['value'])->first();
-        // });
-
-        // $this->sortSections();
+        
     }
 
     protected function sortSections()
@@ -180,11 +176,16 @@ class EditionForm extends Component
         $this->resetErrorBag();
         $this->resetValidation();
         $rehydratedSections = collect();
+        
         foreach ($this->sections as $section) {
             if ($section instanceof Section) {
                 $rehydratedSections->push($section);
             } else {
-                $rehydratedSections->push(new Section($section));
+                if ($section['id']){
+                $rehydratedSections->push(Section::find($section->id));
+                }else{
+                $rehydratedSections->push(new Section($section->id));
+                }
             }
         }
         $this->sections = $rehydratedSections;
@@ -200,9 +201,18 @@ class EditionForm extends Component
     {
         $this->validate();
 
+        dd($this->sections->map(function ($section) {
+            return $section->id;
+        }));
+
         $this->edition->piece_id = $this->piece;
         $this->edition->save();
+        
         $this->edition->sections()->saveMany($this->sections->all());
+
+        dd($this->sections->map(function ($section) {
+            return $section->id;
+        }));
 
         return redirect()->route('edition.index', ['piece' => $this->piece]);
     }
