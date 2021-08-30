@@ -11,7 +11,7 @@
                         disabled
                         @endunless
                         autocomplete="composer" autofocus>
-                        <option value="">-- select a composer --</option>
+                        <option value="">-- select/add a composer --</option>
                         @foreach ($composers as $composer_data)
                             <option value="{{ $composer_data->id }}">{{ $composer_data->name }}</option>
                         @endforeach
@@ -36,7 +36,7 @@
                         @if (empty($composer))
                             <option value="">-- select a composer first --</option>
                         @else
-                            <option value="">-- select a piece --</option>
+                            <option value="">-- select/add a piece --</option>
                         @endif
                         @foreach ($pieces as $piece)
                             <option value="{{ $piece->id }}">{{ $piece->title }}</option>

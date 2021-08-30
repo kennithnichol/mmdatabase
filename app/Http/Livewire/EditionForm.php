@@ -71,7 +71,7 @@ class EditionForm extends Component
     {
         $this->edition = $edition ?? new Edition();
 
-        $this->composers = Composer::has('pieces')->orderBy('name', 'asc')->get();
+        $this->composers = Composer::orderBy('name', 'asc')->get();
         $this->publishers = Publisher::orderBy('name')->get();
         $this->editors = Editor::orderBy('name')->get();        
 
