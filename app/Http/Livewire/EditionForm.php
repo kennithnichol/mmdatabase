@@ -33,6 +33,10 @@ class EditionForm extends Component
 
     // the currently edited section
     public $showModal = false;
+    public $showComposerModal = false;
+    public $showPieceModal = false;
+    public $showPublisherModal = false;
+    public $showEditorModal = false;
     public $isEditing = false;
     public $canChangePiece = true;
     public $section;
@@ -105,6 +109,46 @@ class EditionForm extends Component
         $this->section['order'] = $this->sections->count() + 1;
         $this->showModal = true;
         
+    }
+
+    public function addComposer()
+    {
+        $this->showComposerModal = true;
+    }
+
+    public function closeComposer()
+    {
+        $this->showComposerModal = false;
+    }
+
+    public function addPiece()
+    {
+        $this->showPieceModal = true;
+    }
+
+    public function closePiece()
+    {
+        $this->showPieceModal = false;
+    }
+
+    public function addPublisher()
+    {
+        $this->showPublisherModal = true;
+    }
+
+    public function closePublisher()
+    {
+        $this->showPublisherModal = false;
+    }
+
+    public function addEditor()
+    {
+        $this->showEditorModal = true;
+    }
+
+    public function closeEditor()
+    {
+        $this->showEditorModal = false;
     }
 
     public function editSection($index)

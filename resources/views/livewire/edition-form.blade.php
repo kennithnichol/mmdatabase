@@ -17,7 +17,7 @@
                         @endforeach
                     </select>
                     @if($canChangePiece)
-                        <button type="button" wire:click="addComposer" class="btn btn-outline-primary">Add Composer</button>
+                        <button type="button" wire:click.prevent="addComposer" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#composer-modal">Add Composer</button>
                     @endif
                 </div>
                 @error('composer')
@@ -42,8 +42,8 @@
                             <option value="{{ $piece->id }}">{{ $piece->title }}</option>
                         @endforeach
                     </select>
-                    @if($canChangePiece && isset($piece))
-                            <button type="button" wire:click="addPiece" class="btn btn-outline-primary">Add Piece</button>
+                    @if($canChangePiece && !empty($composer))
+                            <button type="button" wire:click.prevent="addPiece" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#piece-modal">Add Piece</button>
                     @endif
                 </div>
                 @error('piece')
@@ -53,24 +53,30 @@
 
             <div class="col-md-6">
                 <label for="publisher" class="form-label">{{ __('Publisher (optional)') }}</label>
-                <select wire:model="publisher" id="publisher" class="form-select">
-                    <option value=""></option>
-                    @foreach ($publishers as $publisher)
-                        <option value="{{ $publisher->id }}">{{ $publisher->title }}</option>
-                    @endforeach
-                </select>
+                <div class="input-group">
+                    <select wire:model="publisher" id="publisher" class="form-select">
+                        <option value=""></option>
+                        @foreach ($publishers as $publisher)
+                            <option value="{{ $publisher->id }}">{{ $publisher->title }}</option>
+                        @endforeach
+                    </select>
+                    <button type="button" wire:click.prevent="addPublisher" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#publisher-modal">Add Publisher</button>
+                </div>
                 @error('publisher')
                     <span class="invalid-feedback" role="alert">{{ $message }}</span>
                 @enderror
             </div>
             <div class="col-md-6">
                 <label for="editor" class="form-label">{{ __('Editor (optional)') }}</label>
-                <select wire:model="editor" id="editor" class="form-select" autocomplete="editor">
-                    <option value=""></option>
-                    @foreach ($editors as $editor)
-                        <option value="{{ $editor->id }}">{{ $editor->title }}</option>
-                    @endforeach
-                </select>
+                <div class="input-group">
+                    <select wire:model="editor" id="editor" class="form-select" autocomplete="editor">
+                        <option value=""></option>
+                        @foreach ($editors as $editor)
+                            <option value="{{ $editor->id }}">{{ $editor->title }}</option>
+                        @endforeach
+                    </select>
+                    <button type="button" wire:click.prevent="addEditor" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editor-modal">Add Editor</button>
+                </div>
                 @error('editor')
                     <span class="invalid-feedback" role="alert">{{ $message }}</span>
                 @enderror
@@ -159,6 +165,59 @@
                 @endif
             </div>
     </form>
+
+    <div wire:ignore.self id="composer-modal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Add composer</h5>
+                    <button wire:click.prevent="closeComposer" type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    @livewire('composer-form')
+                </div>
+            </div>
+        </div>
+    </div>
+    <div wire:ignore.self id="piece-modal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Add piece</h5>
+                    <button wire:click.prevent="closePiece" type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    @livewire('piece-form', ['composer_id' => $composer])
+                </div>
+            </div>
+        </div>
+    </div>
+    <div wire:ignore.self id="publisher-modal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Add publisher</h5>
+                    <button wire:click.prevent="closePublisher" type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    @livewire('publisher-form')
+                </div>
+            </div>
+        </div>
+    </div>
+    <div wire:ignore.self id="editor-modal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Add editor</h5>
+                    <button wire:click.prevent="closeEditor" type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    @livewire('editor-form')
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div wire:ignore.self id="section-modal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-dialog-centered" role="document">
