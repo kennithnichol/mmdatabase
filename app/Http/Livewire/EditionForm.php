@@ -22,6 +22,7 @@ class EditionForm extends Component
     public $editors;
     public $movements;
     public $sections;
+    public $deletedSections;
 
     public $piece;
     public $composer;
@@ -77,10 +78,12 @@ class EditionForm extends Component
 
         $this->pieces = collect();
         $this->sections = collect();
+        $this->deletedSections = collect();
         $this->movements = collect();
 
         if ($edition->id) {
             $this->sections = $edition->sections;
+            $this->sections = $this->sections->sortBy('order');
             $this->canChangePiece = false;
             $this->piece = $edition->piece->id;
             $this->composer = $edition->composer->id;
@@ -101,6 +104,7 @@ class EditionForm extends Component
         $this->section = new Section();
         $this->section['order'] = $this->sections->count() + 1;
         $this->showModal = true;
+        
     }
 
     public function editSection($index)
@@ -113,7 +117,7 @@ class EditionForm extends Component
 
     public function removeSection($index)
     {
-        $this->sections->get($index)->delete();
+        $this->deletedSections->push($this->sections->get($index));
         $this->sections->forget($index);
     }
 
@@ -153,6 +157,8 @@ class EditionForm extends Component
             $this->sections->push($this->section);
         }
 
+        $this->sortSections();
+
         $this->canChangePiece = false;
 
         $this->emit('sectionSaved');
@@ -160,35 +166,46 @@ class EditionForm extends Component
     }
 
     public function updateSectionOrder($orderIds)
-    {
-        // ref: https://laravel-livewire.com/screencasts/s8-dragging-list
-
-        
+    {        
+        $this->sections = collect($orderIds)->map(function ($id) {
+            return $this->sections->where('id', (int) $id['value'])->first();
+        });
+        $this->sortSections();
     }
 
     protected function sortSections()
     {
-        // $this->sections = $this->sections->sortBy(['movement', 'asc']);
+        $this->sections = $this->sections->sortBy(['movement', 'asc']);
     }
+
 
     public function hydrate()
     {
         $this->resetErrorBag();
         $this->resetValidation();
-        $rehydratedSections = collect();
         
-        foreach ($this->sections as $section) {
+        
+        $this->sections = $this->rehydrateSections($this->sections);
+        $this->deletedSections = $this->rehydrateSections($this->deletedSections);
+    }
+
+    protected function rehydrateSections($sections)
+    {
+        $rehydratedSections = collect();
+
+        foreach ($sections as $section) {
             if ($section instanceof Section) {
                 $rehydratedSections->push($section);
             } else {
-                if ($section['id']){
-                $rehydratedSections->push(Section::find($section->id));
-                }else{
-                $rehydratedSections->push(new Section($section->id));
+                if (isset($section['id'])) {
+                    $rehydratedSections->push(Section::find($section['id']));
+                } else {
+                    $rehydratedSections->push(new Section($section));
                 }
             }
         }
-        $this->sections = $rehydratedSections;
+
+        return $rehydratedSections;
     }
 
     public function close()
@@ -201,18 +218,19 @@ class EditionForm extends Component
     {
         $this->validate();
 
-        dd($this->sections->map(function ($section) {
-            return $section->id;
-        }));
-
+        $this->sections = $this->sections->map(function ($section, $key) {
+            $section->order = $key + 1;
+            return $section;
+        });
+        
         $this->edition->piece_id = $this->piece;
-        $this->edition->save();
+        $this->edition->save();        
         
         $this->edition->sections()->saveMany($this->sections->all());
 
-        dd($this->sections->map(function ($section) {
-            return $section->id;
-        }));
+        $this->deletedSections->each(function($section) {
+            $section->delete();
+        });
 
         return redirect()->route('edition.index', ['piece' => $this->piece]);
     }

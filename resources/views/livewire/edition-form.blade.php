@@ -117,8 +117,8 @@
                                 $section_movement = $movements->where('id', $section['movement_id'])->first();
                                 $time_signature = $section_movement->timeSignature;
                             @endphp
-                            <tr wire:sortable.item="{{ $section->id }}" wire:key="section-{{ $section->id }}">
-                                <th scope="row">{{ $section['order'] }}</th>
+                            <tr wire:sortable.item="{{ $section->id }}" wire:key="section-{{ $section->order }}">
+                                <th wire:sortable.handle scope="row">{{ $section['order'] }}</th>
                                 <td>{{ $section_movement->number }}</td>
                                 <td>{{ $time_signature->count . ($time_signature->note ? '/' . $time_signature->note : '') }}
                                 </td>
