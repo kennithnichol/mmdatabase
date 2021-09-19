@@ -42,6 +42,10 @@ class EditionForm extends Component
     public $section;
     public $editIndex;
 
+    protected $listeners = [
+        'composerSaved',
+    ];
+
     public function rules(): array
     {
         if ($this->showModal) {
@@ -91,8 +95,8 @@ class EditionForm extends Component
             $this->canChangePiece = false;
             $this->piece = $edition->piece->id;
             $this->composer = $edition->composer->id;
-            $this->publisher = $edition->publisher;
-            $this->editor = $edition->editor;
+            $this->publisher = $edition->publisher->id;
+            $this->editor = $edition->editor->id;
         }        
 
         if ($this->composer) {
@@ -102,7 +106,14 @@ class EditionForm extends Component
             $this->updatedPiece($this->piece);
         }
     }
-
+    
+    public function composerSaved(?int $composer)
+    {
+        $this->composers = Composer::orderBy('name', 'asc')->get();
+        if (!empty($composer)) {
+            $this->composer = $composer;
+        }
+    }
     public function addSection()
     {
         $this->section = new Section();
@@ -118,6 +129,7 @@ class EditionForm extends Component
 
     public function closeComposer()
     {
+        $this->emit('composerModalClosed');
         $this->showComposerModal = false;
     }
 
@@ -169,10 +181,15 @@ class EditionForm extends Component
     {
         if (empty($composer_id)) {
             $this->pieces = collect();
-            $this->piece = null;
+            $this->piece = '';
             return;
         }
         $this->pieces = Piece::where('composer_id', $composer_id)->orderBy('title')->get();
+        if ($this->pieces->count() > 0) {
+            $this->piece = $this->pieces->first()->id;
+        } else {
+            $this->piece = '';
+        }
     }
 
     public function updatedPiece($piece_id)

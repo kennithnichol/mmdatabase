@@ -174,7 +174,7 @@
                     <button wire:click.prevent="closeComposer" type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    @livewire('composer-form')
+                    @livewire('composer-form', ['inModal' => true])
                 </div>
             </div>
         </div>
@@ -358,6 +358,12 @@
     <script>
         Livewire.on('sectionSaved', () => {
             let modalContainer = document.getElementById('section-modal');
+            if (modalContainer) {
+                bs_modal.getInstance(modalContainer).hide();
+            }
+        });
+        Livewire.on('composerSaved', () => {
+            let modalContainer = document.getElementById('composer-modal');
             if (modalContainer) {
                 bs_modal.getInstance(modalContainer).hide();
             }
