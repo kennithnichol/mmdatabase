@@ -187,7 +187,7 @@
                     <button wire:click.prevent="closePiece" type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    @livewire('piece-form', ['composer_id' => $composer])
+                    @livewire('piece-form', ['composer_id' => $composer, 'inModal' => true])
                 </div>
             </div>
         </div>
@@ -200,7 +200,7 @@
                     <button wire:click.prevent="closePublisher" type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    @livewire('publisher-form')
+                    @livewire('publisher-form', ['inModal' => true])
                 </div>
             </div>
         </div>
@@ -213,7 +213,7 @@
                     <button wire:click.prevent="closeEditor" type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    @livewire('editor-form')
+                    @livewire('editor-form', ['inModal' => true])
                 </div>
             </div>
         </div>
@@ -364,6 +364,18 @@
         });
         Livewire.on('composerSaved', () => {
             let modalContainer = document.getElementById('composer-modal');
+            if (modalContainer) {
+                bs_modal.getInstance(modalContainer).hide();
+            }
+        });
+        Livewire.on('pieceSaved', () => {
+            let modalContainer = document.getElementById('piece-modal');
+            if (modalContainer) {
+                bs_modal.getInstance(modalContainer).hide();
+            }
+        });
+        Livewire.on('editorSaved', () => {
+            let modalContainer = document.getElementById('editor-modal');
             if (modalContainer) {
                 bs_modal.getInstance(modalContainer).hide();
             }

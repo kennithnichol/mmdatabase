@@ -44,6 +44,7 @@ class EditionForm extends Component
 
     protected $listeners = [
         'composerSaved',
+        'pieceSaved'
     ];
 
     public function rules(): array
@@ -114,6 +115,22 @@ class EditionForm extends Component
             $this->composer = $composer;
         }
     }
+
+    public function editorSaved(?int $editor)
+    {
+        $this->editors = Editor::orderBy('name', 'asc')->get();
+        if (!empty($editor)) {
+            $this->editor = $editor;
+        }
+    }
+
+    public function pieceSaved(?int $piece)
+    {
+        $this->pieces = Piece::where('composer_id', $this->composer)->orderBy('title')->get();
+        if (!empty($piece)) {
+            $this->piece = $piece;
+        }
+    }
     public function addSection()
     {
         $this->section = new Section();
@@ -160,6 +177,7 @@ class EditionForm extends Component
 
     public function closeEditor()
     {
+        $this->emit('editorModalClosed');
         $this->showEditorModal = false;
     }
 
@@ -179,6 +197,7 @@ class EditionForm extends Component
 
     public function updatedComposer($composer_id)
     {
+        $this->emit('updatedComposer', $composer_id);
         if (empty($composer_id)) {
             $this->pieces = collect();
             $this->piece = '';

@@ -18,6 +18,7 @@ class ComposerForm extends Component
 
     protected $listeners = [
         'composerModalClosed' => 'modalClosed',
+        'updatedComposer',
     ];
 
     protected $rules = [
@@ -30,6 +31,11 @@ class ComposerForm extends Component
     {
         $this->reset();
         $this->hydrate();
+    }
+
+    public function updatedComposer($composer_id)
+    {
+        $this->composer = $composer_id;
     }
     
     public function mount(?Composer $composer, $inModal = false)

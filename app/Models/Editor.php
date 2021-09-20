@@ -9,6 +9,10 @@ class Editor extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+    ];
+
     public function pieces()
     {
         return $this->hasMany('App\Models\Piece');
