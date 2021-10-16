@@ -83,7 +83,7 @@ class EditionForm extends Component
 
         $this->composers = Composer::orderBy('name', 'asc')->get();
         $this->publishers = Publisher::orderBy('name')->get();
-        $this->editors = Editor::orderBy('name')->get();        
+        $this->editors = Editor::orderBy('name')->get();
 
         $this->pieces = collect();
         $this->sections = collect();
@@ -98,7 +98,7 @@ class EditionForm extends Component
             $this->composer = $edition->composer->id;
             $this->publisher = $edition->publisher->id;
             $this->editor = $edition->editor->id;
-        }        
+        }
 
         if ($this->composer) {
             $this->updatedComposer($this->composer);
@@ -107,7 +107,7 @@ class EditionForm extends Component
             $this->updatedPiece($this->piece);
         }
     }
-    
+
     public function composerSaved(?int $composer)
     {
         $this->composers = Composer::orderBy('name', 'asc')->get();
@@ -136,7 +136,6 @@ class EditionForm extends Component
         $this->section = new Section();
         $this->section['order'] = $this->sections->count() + 1;
         $this->showModal = true;
-        
     }
 
     public function addComposer()
@@ -246,7 +245,7 @@ class EditionForm extends Component
     }
 
     public function updateSectionOrder($orderIds)
-    {        
+    {
         $this->sections = collect($orderIds)->map(function ($id) {
             return $this->sections->where('id', (int) $id['value'])->first();
         });
@@ -263,8 +262,8 @@ class EditionForm extends Component
     {
         $this->resetErrorBag();
         $this->resetValidation();
-        
-        
+
+
         $this->sections = $this->rehydrateSections($this->sections);
         $this->deletedSections = $this->rehydrateSections($this->deletedSections);
     }
@@ -302,13 +301,13 @@ class EditionForm extends Component
             $section->order = $key + 1;
             return $section;
         });
-        
+
         $this->edition->piece_id = $this->piece;
-        $this->edition->save();        
-        
+        $this->edition->save();
+
         $this->edition->sections()->saveMany($this->sections->all());
 
-        $this->deletedSections->each(function($section) {
+        $this->deletedSections->each(function ($section) {
             $section->delete();
         });
 

@@ -3,21 +3,19 @@
         @csrf
         <div class="row g-2">
             <div class="col-md-6">
-
                 <label for="composer" class="form-label">{{ __('Composer') }}</label>
                 <div class="input-group">
                     <select wire:model="composer" id="composer"
-                        class="form-select @error('composer') is-invalid @enderror" @unless($canChangePiece)
-                        disabled
-                        @endunless
-                        autocomplete="composer" autofocus>
+                        class="form-select @error('composer') is-invalid @enderror" @unless($canChangePiece) disabled
+                        @endunless autocomplete="composer" autofocus>
                         <option value="">-- select/add a composer --</option>
                         @foreach ($composers as $composer_data)
                             <option value="{{ $composer_data->id }}">{{ $composer_data->name }}</option>
                         @endforeach
                     </select>
-                    @if($canChangePiece)
-                        <button type="button" wire:click.prevent="addComposer" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#composer-modal">Add Composer</button>
+                    @if ($canChangePiece)
+                        <button type="button" wire:click.prevent="addComposer" class="btn btn-outline-primary"
+                            data-bs-toggle="modal" data-bs-target="#composer-modal">Add Composer</button>
                     @endif
                 </div>
                 @error('composer')
@@ -29,10 +27,7 @@
                 <label for="piece" class="form-label">{{ __('Piece') }}</label>
                 <div class="input-group">
                     <select wire:model="piece" id="piece" class="form-select @error('piece') is-invalid @enderror"
-                        @unless($canChangePiece)
-                        disabled
-                        @endunless
-                        autocomplete="piece">
+                        @unless($canChangePiece) disabled @endunless autocomplete="piece">
                         @if (empty($composer))
                             <option value="">-- select a composer first --</option>
                         @else
@@ -42,8 +37,9 @@
                             <option value="{{ $piece->id }}">{{ $piece->title }}</option>
                         @endforeach
                     </select>
-                    @if($canChangePiece && !empty($composer))
-                            <button type="button" wire:click.prevent="addPiece" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#piece-modal">Add Piece</button>
+                    @if ($canChangePiece && !empty($composer))
+                        <button type="button" wire:click.prevent="addPiece" class="btn btn-outline-primary"
+                            data-bs-toggle="modal" data-bs-target="#piece-modal">Add Piece</button>
                     @endif
                 </div>
                 @error('piece')
@@ -76,7 +72,8 @@
                             <option value="{{ $editor->id }}">{{ $editor->title }}</option>
                         @endforeach
                     </select>
-                    <button type="button" wire:click.prevent="addEditor" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editor-modal">Add Editor</button>
+                    <button type="button" wire:click.prevent="addEditor" class="btn btn-outline-primary"
+                        data-bs-toggle="modal" data-bs-target="#editor-modal">Add Editor</button>
                 </div>
                 @error('editor')
                     <span class="invalid-feedback" role="alert">{{ $message }}</span>
@@ -172,10 +169,11 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5>Add composer</h5>
-                    <button wire:click.prevent="closeComposer" type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button wire:click.prevent="closeComposer" type="button" class="btn-close"
+                        data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    @livewire('composer-form', ['inModal' => true])
+                    <livewire:composer-form :inModal='true' />
                 </div>
             </div>
         </div>
@@ -185,10 +183,11 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5>Add piece</h5>
-                    <button wire:click.prevent="closePiece" type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button wire:click.prevent="closePiece" type="button" class="btn-close"
+                        data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    @livewire('piece-form', ['composer_id' => $composer, 'inModal' => true])
+                    <livewire:piece-form key='{{ $composer }}' :composer="$composer" inModal="true" />
                 </div>
             </div>
         </div>
@@ -212,7 +211,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5>Add editor</h5>
-                    <button wire:click.prevent="closeEditor" type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button wire:click.prevent="closeEditor" type="button" class="btn-close"
+                        data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     @livewire('editor-form', ['inModal' => true])
@@ -227,7 +227,8 @@
                 <form wire:submit.prevent="saveSection">
                     <div class="modal-header">
                         <h5>@if ($isEditing)Edit section @else Add section @endif</h5>
-                        <button wire:click="close" type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <button wire:click="close" type="button" class="btn-close"
+                            data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body form-row">
                         <div class="col-12">
@@ -326,6 +327,7 @@
                         </div>
                         <div class="col-12 col-sm-4">
                             <label for="ornamental_note">Fastest Ornamental</label>
+                            <div>
                             <select id="ornamental_note" wire:model="section.ornamental_note" class="form-control">
                                 <option value=""> --</option>
                                 <option value="1">Whole Note</option>
@@ -341,6 +343,7 @@
                                 <input class="form-check-input" id="ornamental_note_dotted" type="checkbox"
                                     wire:model="section.ornamental_note_dotted" />
                                 <label class="form-check-label" for="ornamental_note_dotted">dotted?</label>
+                            </div>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">Save</button>
