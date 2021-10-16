@@ -60,7 +60,8 @@
                             <option value="{{ $publisher->id }}">{{ $publisher->title }}</option>
                         @endforeach
                     </select>
-                    <button type="button" wire:click.prevent="addPublisher" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#publisher-modal">Add Publisher</button>
+                    <button type="button" wire:click.prevent="addPublisher" class="btn btn-outline-primary"
+                        data-bs-toggle="modal" data-bs-target="#publisher-modal">Add Publisher</button>
                 </div>
                 @error('publisher')
                     <span class="invalid-feedback" role="alert">{{ $message }}</span>
@@ -197,7 +198,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5>Add publisher</h5>
-                    <button wire:click.prevent="closePublisher" type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button wire:click.prevent="closePublisher" type="button" class="btn-close"
+                        data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     @livewire('publisher-form', ['inModal' => true])
